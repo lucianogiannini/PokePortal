@@ -1,13 +1,11 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from database import db
+from models.Message import Message
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///myapp.db'
-db = SQLAlchemy(app)
-
-class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(255))
+db.init_app(app)
 
 @app.route('/')
 def index():
