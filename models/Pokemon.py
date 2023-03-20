@@ -1,5 +1,6 @@
 from database import db
 import requests
+import json
 
 class Pokemon(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -8,7 +9,6 @@ class Pokemon(db.Model):
     height = db.Column(db.Float)
     weight = db.Column(db.Float)
     types = db.Column(db.String(255))
-    abilities = db.Column(db.String(255))
     moves = db.Column(db.String(255))
     sprites = db.Column(db.String(255))
     url = 'https://pokeapi.co/api/v2/pokemon/'
@@ -16,14 +16,28 @@ class Pokemon(db.Model):
 
     def formatEncounterLocations(self, encounterURL):
         encounterURL = 'https://pokeapi.co' + str(encounterURL)
-        #add resquest code
+        #add request code
 
     def formatTypes(self, list_):
         types = []
         for tp in list_[0]:
             types.append(tp['type']['name'])
-        typesStr = types.json()
+        typesStr = json.dumps(types)
         return typesStr
+
+    def formatMoves(self, list_):
+        moves = []
+        for move in list_:
+            moves.append(move['move']['name'])
+        movesStr = json.dumps(moves)
+        return movesStr
+
+    def formatSprites(self, dict):
+        sprites = []
+        sprites.append(dict['front_default'])
+        sprites.append(dict['front_shiny'])
+        spritesStr = json.dumps(sprites)
+        return spritesStr
 
     def getInformation(self, id):
         self.url = self.url + str(id)
@@ -36,7 +50,6 @@ class Pokemon(db.Model):
             self.weight = data.weight
             self.encounter_locations = self.formatEncounterLocations(data.location_area_encounters)
             self.types = self.formatTypes(data.types)
-            self.abilites = self.formatAbilites(data.abilities)
             self.moves = self.formatMoves(data.moves)
             self.sprites = self.formatSprites(data.sprites)
         else:
