@@ -54,6 +54,7 @@ class Pokemon(db.Model):
             self.types = self.formatTypes(data.types)
             self.moves = self.formatMoves(data.moves)
             self.sprites = self.formatSprites(data.sprites)
+            self.pushToDB()
         else:
             return None
     
