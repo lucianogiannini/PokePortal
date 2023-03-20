@@ -14,7 +14,7 @@ class Pokemon(db.Model):
     
     def __init__(self, id):
         self.url = 'https://pokeapi.co/api/v2/pokemon/'
-        self.getInformation(id)
+        self.fetchData(id)
 
     def formatEncounterLocations(self, encounterURL):
         encounterURL = 'https://pokeapi.co' + str(encounterURL)
@@ -41,7 +41,7 @@ class Pokemon(db.Model):
         spritesStr = json.dumps(sprites)
         return spritesStr
 
-    def getInformation(self, id):
+    def fetchData(self, id):
         self.url = self.url + str(id)
         response = requests.get(self.url)
         if response.status_code == 200:
@@ -57,6 +57,33 @@ class Pokemon(db.Model):
         else:
             return None
     
-    
+    def getInformation(self):
+        info = dict()
+        info['id'] = self.id
+        info['name'] = self.name
+        info['height'] = self.height
+        info['weight'] = self.weight
+        info['encounter_locations'] = self.encounter_locations
+        info['types'] = self.types
+        info['moves'] = self.moves
+        info['sprites'] = self.sprites
+        return info
+
+    def setInformation(self, info):
+        self.id = info['id']
+        self.name = info['name']
+        self.height = info['height']
+        self.weight = info['weight']
+        self.encounter_locations = info['encounter_locations']
+        self.types = info['types']
+        self.moves = info['moves']
+        self.sprites = info['sprites']
+        self.pushToDB()
+
+    def pushToDB(self):
+        db.session.add(self)
+        db.session.commit()
+        return 'Pokemon added'
+
 
 
