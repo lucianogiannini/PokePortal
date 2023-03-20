@@ -11,8 +11,10 @@ class Pokemon(db.Model):
     types = db.Column(db.String(255))
     moves = db.Column(db.String(255))
     sprites = db.Column(db.String(255))
-    url = 'https://pokeapi.co/api/v2/pokemon/'
-
+    
+    def __init__(self, id):
+        self.url = 'https://pokeapi.co/api/v2/pokemon/'
+        self.getInformation(id)
 
     def formatEncounterLocations(self, encounterURL):
         encounterURL = 'https://pokeapi.co' + str(encounterURL)
