@@ -1,0 +1,87 @@
+{% include 'navbar.html' %} {% block content %}
+
+<style>
+  .row {
+    display: flex;
+  }
+  .flexbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .pokecard {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+  }
+  .pokename {
+    font-size: 30px;
+    font-weight: bold;
+  }
+  img {
+    width: 200px;
+    height: 200px;
+  }
+  .cont {
+    background-color: rgb(118, 199, 218);
+  }
+  .container {
+    width: 970px !important;
+  }
+</style>
+<div class="cont">
+  <div class="container">
+    {% for pokemon_s in pokemons %}
+    <div class="row">
+      <div class="col-4">
+        <div class="flexbox">
+          <div class="pokecard">
+            <div class="pokename">
+              <a class="" href="{{url_for('pokemon', name=pokemon_s[0].name)}}"
+                >{{pokemon_s[0].name|capitalize}}</a
+              >
+            </div>
+            <img src="{{pokemon_s[0].sprites[0]}}" alt="img" />
+          </div>
+          {% if pokemon_s|length > 1 %}
+          <div class="pokecard">
+            <div class="pokename">
+              <a href="{{url_for('pokemon', name=pokemon_s[1].name)}}"
+                >{{pokemon_s[1].name|capitalize}}</a
+              >
+            </div>
+            <img src="{{pokemon_s[1].sprites[0]}}" alt="img" />
+          </div>
+          {% endif %}
+          {% if pokemon_s|length > 2 %}
+
+          <div class="pokecard">
+            <div class="pokename">
+              <a href="{{url_for('pokemon', name=pokemon_s[2].name)}}"
+                >{{pokemon_s[2].name|capitalize}}</a
+              >
+            </div>
+            <img src="{{pokemon_s[2].sprites[0]}}" alt="img" />
+          </div>
+          {% endif %}
+          {% if pokemon_s|length > 3 %}
+          <div class="pokecard">
+            <div class="pokename">
+              <a href="{{url_for('pokemon', name=pokemon_s[3].name)}}"
+                >{{pokemon_s[3].name|capitalize}}</a
+              >
+            </div>
+            <img src="{{pokemon_s[3].sprites[0]}}" alt="img" />
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

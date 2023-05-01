@@ -1,6 +1,9 @@
 {% include 'navbar.html' %} {% block content %}
 
 <style>
+  html{
+    min-width: 1380px;
+  }
   .map {
     width: 900px;
     height: 670px;
@@ -21,10 +24,12 @@
     height: 600px;
     margin-left: 5px;
     flex-shrink: 0;
+    border: 3px solid black;
 
   }
   .row {
     display: flex;
+    justify-content: center;
   }
   .cont {
     padding-left: 20px;
@@ -225,7 +230,7 @@
   chart.height('100%');
   chart.layout().type("fixed");
   chart.background().fill({
-    src: "https://archives.bulbagarden.net/media/upload/8/8a/Kalos_alt.png",
+    src: "{{url_for('static', filename='Image/Kalos_Region.png')}}",
   });
   chart.interactivity().zoomOnMouseWheel(false);
   chart.interactivity().scrollOnMouseWheel(false);
@@ -239,7 +244,6 @@
 
   chart.listen('click', function(e) {
     var tag = e.domTarget.tag;
-
     if(tag){
       console.log(`Clicked ${tag.type} with ID ${tag.id}`);
       if(tag.type === 'node'){
@@ -265,7 +269,6 @@
         var ul = document.createElement("ul");
         for (var i = 0; i < pokemon.length; i++) {
           var li = document.createElement("li");
-          
           var a = document.createElement("a");
           let poke = pokemon[i];
           poke = poke.replace(/-/g, ' ');

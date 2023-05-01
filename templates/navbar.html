@@ -27,8 +27,7 @@
 <nav class="navbar navbar-default nav">
   <!-- &lt;!-- Add a navbar to your site, include the same elements as a seen in the screenshots --&gt;
     &lt;!-- 27 LoC --&gt; -->
-  <div class="left">
-  </div>
+  <div class="left"></div>
   <div class="right">
     <a
       class="btn btn-warning btn-outline-dark btn-md"
@@ -44,20 +43,20 @@
     >
       PokeDex
     </a>
-    <button
+    <a
       class="btn btn-warning btn-outline-dark btn-md"
       type="submit"
-      onclick=""
+      href="{{url_for('my_collection')}}"
     >
       My Collection
-    </button>
-    <button
+    </a>
+    <a
       class="btn btn-warning btn-outline-dark btn-md"
       type="submit"
-      onclick=""
+      href="{{url_for('search')}}"
     >
       Search
-    </button>
+    </a>
   </div>
 </nav>
 {% endblock %}

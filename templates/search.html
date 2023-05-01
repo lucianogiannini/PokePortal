@@ -1,0 +1,77 @@
+{% include 'navbar.html' %} {% block content %}
+<style>
+  html {
+    background-color: rgb(118, 199, 218);
+  }
+  #searchbar {
+    border-radius: 10px;
+  }
+
+  input[type="text"] {
+    width: 600px;
+    height: 50px;
+    -webkit-transition: width 0.15s ease-in-out;
+    transition: width 0.15s ease-in-out;
+  }
+  .pokename {
+    font-size: 30px;
+    font-weight: bold;
+  }
+  .cont {
+    padding-top: 30px;
+    display: flex;
+    justify-content: center;
+    width: auto;
+    background-color: rgb(118, 199, 218);
+  }
+</style>
+<div class="cont">
+  <div class="s">
+    <input
+      id="searchbar"
+      onkeyup="search_pokemon()"
+      type="text"
+      name="search"
+      placeholder="Search pokemon.."
+    />
+    <div id="pokemons"></div>
+  </div>
+</div>
+<script type="text/javascript">
+  function search_pokemon() {
+    let input = document.getElementById("searchbar").value;
+    $.ajax({
+      type: "POST",
+      url: "/search",
+      data: {
+        search: input,
+      },
+      success: function (data) {
+        console.log(data);
+        let pokemons = data;
+
+        document.getElementById("pokemons").innerHTML = "";
+        if (pokemons == "No pokemon found") {
+          document.getElementById("pokemons").innerHTML = "No pokemon found";
+        } else {
+          for (let i = 0; i < pokemons.length; i++) {
+            let html = "";
+            html += '<div class="pokecard">';
+            html += '<div class="pokename">';
+            html +=
+              '<a class="" href="/pokemon/' +
+              pokemons[i] +
+              '">' +
+              pokemons[i] +
+              "</a>";
+            html += "</div>";
+            html += "</div>";
+
+            document.getElementById("pokemons").innerHTML += html;
+          }
+        }
+      },
+    });
+  }
+</script>
+{% endblock %}
