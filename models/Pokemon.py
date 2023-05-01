@@ -1,8 +1,10 @@
 from database import db
 import requests
 import json
+from models.Location import Location
 
 class Pokemon(db.Model):
+    entry_number = db.Column(db.Integer)
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     encounter_locations = db.Column(db.String(255))
@@ -12,17 +14,22 @@ class Pokemon(db.Model):
     moves = db.Column(db.String(255))
     sprites = db.Column(db.String(255))
     
-    def __init__(self, id):
+    def __init__(self, entry_number, id):
         self.url = 'https://pokeapi.co/api/v2/pokemon/'
+        self.entry_number = entry_number
         self.fetchData(id)
 
-    def formatEncounterLocations(self, encounterURL):
-        encounterURL = 'https://pokeapi.co' + str(encounterURL)
-        #add request code
+    def formatEncounterLocations(self):
+      res = db.session.query(Location).where(Location.pokemon_encounters.contains(self.name)).all()
+      locations = []
+      for loc in res:
+        locations.append(loc.name)
+      locationsStr = json.dumps(locations)
+      return locationsStr
 
     def formatTypes(self, list_):
         types = []
-        for tp in list_[0]:
+        for tp in list_:
             types.append(tp['type']['name'])
         typesStr = json.dumps(types)
         return typesStr
@@ -46,14 +53,14 @@ class Pokemon(db.Model):
         response = requests.get(self.url)
         if response.status_code == 200:
             data = response.json()
-            self.id = data.id
-            self.name = data.name
-            self.height = data.height
-            self.weight = data.weight
-            self.encounter_locations = self.formatEncounterLocations(data.location_area_encounters)
-            self.types = self.formatTypes(data.types)
-            self.moves = self.formatMoves(data.moves)
-            self.sprites = self.formatSprites(data.sprites)
+            self.id = data['id']
+            self.name = data['name']
+            self.height = data['height']
+            self.weight = data['weight']
+            self.encounter_locations = self.formatEncounterLocations()
+            self.types = self.formatTypes(data['types'])
+            self.moves = self.formatMoves(data['moves'])
+            self.sprites = self.formatSprites(data['sprites'])
             self.pushToDB()
         else:
             return None
@@ -82,9 +89,12 @@ class Pokemon(db.Model):
         self.pushToDB()
 
     def pushToDB(self):
+      if not db.session.query(Pokemon).where(Pokemon.id == self.id).first():
         db.session.add(self)
-        db.session.commit()
-        return 'Pokemon added'
+      
+      print(self.entry_number)
+      db.session.commit()
+      return 'Pokemon added'
 
 
 

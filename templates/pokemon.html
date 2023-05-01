@@ -1,0 +1,140 @@
+{% include 'navbar.html' %} {% block content %}
+<style>
+  html {
+    background-color: rgb(118, 199, 218);
+  }
+
+  .cont {
+    background-color: rgb(118, 199, 218);
+  }
+  .pokemon_name {
+    font-size: 30px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+  }
+  .pokemon_sprite {
+    display: flex;
+    justify-content: center;
+    height: 200px;
+  }
+  .shiny {
+    height: fit-content;
+    margin-top: 130px;
+  }
+  .type {
+    width: 50px;
+    height: 25px;
+    margin: 5px;
+  }
+  .pokemon_types {
+    display: flex;
+    justify-content: center;
+  }
+  .height_weight_cont {
+    display: flex;
+    justify-content: center;
+    font-size: medium;
+    font-weight: bold;
+  }
+  .pokemon_height {
+    margin-right: 10px;
+  }
+  .pokemon_weight {
+    margin-left: 10px;
+  }
+  .pokemon_encounters {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .pokemon_encounter_title {
+    margin-top: 10px;
+  }
+  .pokemon_move_title {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .pokemon_moves {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .pokemon_move {
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+  }
+  .pokemon_encounter_cont {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .pokemon_location {
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+  }
+</style>
+<div class="cont">
+  <div class="container">
+    <div class="flexbox">
+      <div class="pokemon_name">
+        #{{pokemon.id}} {{pokemon.name|formatname}}
+      </div>
+      <div class="pokemon_sprite">
+        <img src="{{pokemon.sprites[0]}}" alt="img" />
+        <button class="btn btn-primary shiny" onclick="shiny()">Shiny</button>
+      </div>
+
+      <div class="pokemon_types">
+        {% for type in pokemon.types %}
+        <img src="{{type|formattype}}" class="type" />
+        {% endfor %}
+      </div>
+      <div class="height_weight_cont">
+        <div class="pokemon_height">Height: {{pokemon.height}}</div>
+        <div class="pokemon_weight">Weight: {{pokemon.weight}}</div>
+      </div>
+      <div class="pokemon_encounters">
+        <h2 class="pokemon_encounter_title">
+          Where can you encounter this pokemon in the wild?
+        </h2>
+        <div class="pokemon_encounter_cont">
+          {% if pokemon.encounter_locations|length != 0 %} {% for location in
+          pokemon.encounter_locations %}
+          <h2 class="pokemon_location">{{location|formatlocation}}</h2>
+          {% endfor %}
+        </div>
+        {% else %}
+        <h2>Sorry but this pokemon doesn't spawn in the wild.</h2>
+        {% endif %}
+      </div>
+      <div class="pokemon_move_title">
+        <h2>Moves:</h2>
+        <div class="pokemon_moves">
+          {% for move in pokemon.moves %}
+          <h2 class="pokemon_move">{{move|formatmove}}</h2>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  function shiny() {
+    var img = document.querySelector(".pokemon_sprite img");
+    if (img.src == "{{pokemon.sprites[0]}}") {
+      img.src = "{{pokemon.sprites[1]}}";
+    } else {
+      img.src = "{{pokemon.sprites[0]}}";
+    }
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'bootstrap/base.html' %} {% block content %}
+<style>
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0px !important;
+    background-color: rgb(118, 199, 218);
+  }
+  .left {
+    float: left;
+  }
+  .right {
+    float: right;
+  }
+  .home,
+  .settings,
+  .login {
+    font-size: medium;
+    margin-right: 10px;
+  }
+  .filter {
+    padding: 5px;
+    padding-bottom: 6px;
+  }
+</style>
+<nav class="navbar navbar-default nav">
+  <!-- &lt;!-- Add a navbar to your site, include the same elements as a seen in the screenshots --&gt;
+    &lt;!-- 27 LoC --&gt; -->
+  <div class="left">
+  </div>
+  <div class="right">
+    <a
+      class="btn btn-warning btn-outline-dark btn-md"
+      type="submit"
+      href="{{url_for('map')}}"
+    >
+      Home
+    </a>
+    <a
+      class="btn btn-warning btn-outline-dark btn-md"
+      type="submit"
+      href="{{url_for('pokedex')}}"
+    >
+      PokeDex
+    </a>
+    <button
+      class="btn btn-warning btn-outline-dark btn-md"
+      type="submit"
+      onclick=""
+    >
+      My Collection
+    </button>
+    <button
+      class="btn btn-warning btn-outline-dark btn-md"
+      type="submit"
+      onclick=""
+    >
+      Search
+    </button>
+  </div>
+</nav>
+{% endblock %}

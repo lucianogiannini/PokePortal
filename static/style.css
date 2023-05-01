@@ -1,0 +1,17 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 1em;
+}
+
+ul {
+  margin-top: 1em;
+}
+
+li {
+  font-size: 1.2em;
+  margin-bottom: 0.5em;
+}

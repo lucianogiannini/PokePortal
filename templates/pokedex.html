@@ -1,0 +1,192 @@
+{% include 'navbar.html' %} {% block content %}
+
+<style>
+  .row {
+    display: flex;
+  }
+  .flexbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .pokecard {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+  }
+  .pokename {
+    font-size: 30px;
+    font-weight: bold;
+  }
+  img {
+    width: 200px;
+    height: 200px;
+  }
+  .cont {
+    background-color: rgb(118, 199, 218);
+  }
+  .type {
+    width: 50px;
+    height: 25px;
+    margin: 5px;
+  }
+  .pokeweight {
+    font-size: medium;
+    font-weight: bold;
+  }
+  .pokeheight {
+    font-size: medium;
+    font-weight: bold;
+  }
+  .encounters {
+    font-size: large;
+    font-weight: bold;
+  }
+  .locations {
+    font-size: medium;
+    font-weight: bold;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 5px;
+    width: fit-content;
+  }
+  .locations_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .container{
+    width: 970px !important;
+  }
+</style>
+<div class="cont">
+  <div class="container">
+    {% for pokemon_s in pokemons %}
+    <div class="row">
+      <div class="col-4">
+        <div class="flexbox">
+          <div class="pokecard">
+            <div class="pokename">
+              <a class="" href="{{url_for('pokemon', name=pokemon_s[0].name)}}"
+                >{{pokemon_s[0].name|capitalize}}</a
+              >
+            </div>
+            <img src="{{pokemon_s[0].sprites[0]}}" alt="img" />
+            <div class="poketype">
+              {% for type in pokemon_s[0].types %}
+              <img src="{{type|formattype}}" class="type" />
+              {% endfor %}
+            </div>
+            <div class="pokeheight">Height: {{pokemon_s[0].height}}</div>
+            <div class="pokeweight">Weight: {{pokemon_s[0].weight}}</div>
+            <div class="pokeencounters">
+              {% if pokemon_s[0].encounter_locations|length != 0 %}
+              <div class="encounters">Encounters:</div>
+              <div class="locations_container">
+                {% for location in pokemon_s[0].encounter_locations %}
+                <div class="locations">{{location|formatlocation}}</div>
+                {% endfor %}
+              </div>
+              {% else %}
+              <div class="encounters">Doesn't spawn in the wild</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="pokecard">
+            <div class="pokename">
+              <a href="{{url_for('pokemon', name=pokemon_s[1].name)}}"
+                >{{pokemon_s[1].name|capitalize}}</a
+              >
+            </div>
+            <img src="{{pokemon_s[1].sprites[0]}}" alt="img" />
+            <div class="poketype">
+              {% for type in pokemon_s[1].types %}
+              <img src="{{type|formattype}}" class="type" />
+              {% endfor %}
+            </div>
+            <div class="pokeheight">Height: {{pokemon_s[0].height}}</div>
+            <div class="pokeweight">Weight: {{pokemon_s[0].weight}}</div>
+            <div class="pokeencounters">
+              {% if pokemon_s[1].encounter_locations|length != 0 %}
+              <div class="encounters">Encounters:</div>
+              <div class="locations_container">
+                {% for location in pokemon_s[1].encounter_locations %}
+                <div class="locations">{{location|formatlocation}}</div>
+                {% endfor %}
+              </div>
+              {% else %}
+              <div class="encounters">Doesn't spawn in the wild</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="pokecard">
+            <div class="pokename">
+              <a href="{{url_for('pokemon', name=pokemon_s[2].name)}}"
+                >{{pokemon_s[2].name|capitalize}}</a
+              >
+            </div>
+            <img src="{{pokemon_s[2].sprites[0]}}" alt="img" />
+            <div class="poketype">
+              {% for type in pokemon_s[2].types %}
+              <img src="{{type|formattype}}" class="type" />
+              {% endfor %}
+            </div>
+            <div class="pokeheight">Height: {{pokemon_s[0].height}}</div>
+            <div class="pokeweight">Weight: {{pokemon_s[0].weight}}</div>
+            <div class="pokeencounters">
+              {% if pokemon_s[2].encounter_locations|length != 0 %}
+              <div class="encounters">Encounters:</div>
+              <div class="locations_container">
+                {% for location in pokemon_s[2].encounter_locations %}
+                <div class="locations">{{location|formatlocation}}</div>
+                {% endfor %}
+              </div>
+              {% else %}
+              <div class="encounters">Doesn't spawn in the wild</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="pokecard">
+            <div class="pokename">
+              <a href="{{url_for('pokemon', name=pokemon_s[3].name)}}"
+                >{{pokemon_s[3].name|capitalize}}</a
+              >
+            </div>
+            <img src="{{pokemon_s[3].sprites[0]}}" alt="img" />
+            <div class="poketype">
+              {% for type in pokemon_s[3].types %}
+              <img src="{{type|formattype}}" class="type" />
+              {% endfor %}
+            </div>
+            <div class="pokeheight">Height: {{pokemon_s[0].height}}</div>
+            <div class="pokeweight">Weight: {{pokemon_s[0].weight}}</div>
+            <div class="pokeencounters">
+              {% if pokemon_s[3].encounter_locations|length != 0 %}
+              <div class="encounters">Encounters:</div>
+              <div class="locations_container">
+                {% for location in pokemon_s[3].encounter_locations %}
+                <div class="locations">{{location|formatlocation}}</div>
+                {% endfor %}
+              </div>
+              {% else %}
+              <div class="encounters">Doesn't spawn in the wild</div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

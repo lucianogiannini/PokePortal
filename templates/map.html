@@ -1,0 +1,287 @@
+{% include 'navbar.html' %} {% block content %}
+
+<style>
+  .map {
+    width: 900px;
+    height: 670px;
+    display: flex;
+    flex-shrink: 0;
+    margin-bottom: 50px;
+  }
+  .location_info {
+    width: 200px;
+    height: 600px;
+    margin-right: 5px;
+    margin-left: 60px;
+    flex-shrink: 0;
+
+  }
+  .filter {
+    width: 200px;
+    height: 600px;
+    margin-left: 5px;
+    flex-shrink: 0;
+
+  }
+  .row {
+    display: flex;
+  }
+  .cont {
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: rgb(118, 199, 218);
+  }
+  .heroimage{
+    width: 60%;
+    height: 250px;
+    border-radius: 100px;
+  }
+  .heroimagecontainer{
+    display: flex;
+    justify-content: center;
+    background-color: rgb(118, 199, 218);
+    padding-bottom: 20px;
+    padding-top: 20px;
+  }
+</style>
+<div class="heroimagecontainer">
+  <img class="heroimage" src="{{url_for('static', filename='Image/POKEPORTAL.png')}}"></img>
+</div>
+<div class="cont">
+  <div class="row">
+    <div class="location_info">
+      <h3 style="text-align:center">Please select a map location to view available pokemon encounters</h3>
+    </div>
+    <div class="map" id="map"></div>
+    <div class="filter"></div>
+  </div>
+</div>
+<script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-core.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-graph.min.js"></script>
+<script type="text/javascript">
+  var locations = {{ locations|safe}}
+  for (var i = 0; i < locations.length; i++) {
+    locations[i] = locations[i].replace(/-/g, ' ');
+    locations[i] = locations[i].replace(/kalos /g, '');
+    temp = locations[i].split(" ");
+    for (var j = 0; j < temp.length; j++) {
+      temp[j] = temp[j].charAt(0).toUpperCase() + temp[j].slice(1);
+    }
+    locations[i] = temp.join(" ");
+  }
+  locations[locations.indexOf("Route 8")] = "Route 8U";
+  locations.push("Route 8L");
+
+  console.log(locations);
+  var pokemons = {{ pokemons|safe }}
+  for (let k in pokemons) {
+    arr = pokemons[k];
+    for(let i = 0; i < arr.length; i++) {
+      arr[i] = arr[i].replace(/-/g, ' ');
+      arr[i] = arr[i].replace(/kalos /g, '');
+      temp = arr[i].split(" ");
+      for (var j = 0; j < temp.length; j++) {
+        temp[j] = temp[j].charAt(0).toUpperCase() + temp[j].slice(1);
+      }
+      arr[i] = temp.join(" ");
+    }
+    pokemons[k] = arr;
+  }
+
+  console.log(pokemons);
+    // create data
+  var data = {};
+  data.nodes = [];
+  data.edges = [];
+
+  data.nodes.push({id: locations[locations.indexOf("Lumiose City")], x: 40, y: -97});
+  data.nodes.push({id: locations[locations.indexOf("Route 4")], x: 76, y: -36});
+  data.nodes.push({id: locations[locations.indexOf("Route 5")], x: -4, y: -17});
+  data.nodes.push({id: locations[locations.indexOf("Route 13")], x: -59, y: -105});
+  data.nodes.push({id: locations[locations.indexOf("Route 14")], x: 39, y: -175});
+  data.nodes.push({id: locations[locations.indexOf("Route 16")], x: 131, y: -110});
+  data.nodes.push({id: locations[locations.indexOf("Laverre City")], x: 43, y: -246});
+  data.nodes.push({id: locations[locations.indexOf("Route 15")], x: 137, y: -189});
+  data.nodes.push({id: locations[locations.indexOf("Dendemille Town")], x: 191, y: -153});
+  data.nodes.push({id: locations[locations.indexOf("Frost Cavern")], x: 252, y: -216});
+  data.nodes.push({id: locations[locations.indexOf("Route 17")], x: 255, y: -114});
+  data.nodes.push({id: locations[locations.indexOf("Anistar City")], x: 332, y: -80});
+  data.nodes.push({id: locations[locations.indexOf("Route 18")], x: 370, y: -54});
+  data.nodes.push({id: locations[locations.indexOf("Couriway Town")], x: 392, y: -32});
+  data.nodes.push({id: locations[locations.indexOf("Terminus Cave")], x: 400, y: -121});
+  data.nodes.push({id: locations[locations.indexOf("Route 19")], x: 369, y: -3});
+  data.nodes.push({id: locations[locations.indexOf("Snowbelle City")], x: 319, y: 31});
+  data.nodes.push({id: locations[locations.indexOf("Route 20")], x: 306, y: 79});
+  data.nodes.push({id: locations[locations.indexOf("Route 21")], x: 276, y: 16});
+  data.nodes.push({id: locations[locations.indexOf("Pokemon Village")], x: 299, y: 135});
+  data.nodes.push({id: locations[locations.indexOf("Victory Road")], x: 239, y: -2});
+  data.nodes.push({id: locations[locations.indexOf("Pokemon League")], x: 239, y: -69});
+  data.nodes.push({id: locations[locations.indexOf("Route 22")], x: 181, y: 6});
+  data.nodes.push({id: locations[locations.indexOf("Santalune City")], x: 128, y: 32});
+  data.nodes.push({id: locations[locations.indexOf("Route 3")], x: 144, y: 61});
+  data.nodes.push({id: locations[locations.indexOf("Santalune Forest")], x: 158, y: 92});
+  data.nodes.push({id: locations[locations.indexOf("Route 2")], x: 159, y: 123});
+  data.nodes.push({id: locations[locations.indexOf("Aquacorde Town")], x: 160, y: 143});
+  data.nodes.push({id: locations[locations.indexOf("Route 1")], x: 161, y: 167});
+  data.nodes.push({id: locations[locations.indexOf("Camphrier Town")], x: -45, y: 31});
+  data.nodes.push({id: locations[locations.indexOf("Route 6")], x: -96, y: 7});
+  data.nodes.push({id: locations[locations.indexOf("Parfum Palace")], x: -148, y: -31});
+  data.nodes.push({id: locations[locations.indexOf("Route 7")], x: -125, y: 39});
+  data.nodes.push({id: locations[locations.indexOf("Connecting Cave")], x: -190, y: 48});
+  data.nodes.push({id: locations[locations.indexOf("Route 8U")], x: -198, y: 83});
+  data.nodes.push({id: locations[locations.indexOf("Ambrette Town")], x: -218, y: 148});
+  data.nodes.push({id: locations[locations.indexOf("Route 9")], x: -151, y: 131});
+  data.nodes.push({id: locations[locations.indexOf("Glittering Cave")], x: -81, y: 143});
+  data.nodes.push({id: locations[locations.indexOf("Route 8L")], x: -230, y: 106});
+  data.nodes.push({id: locations[locations.indexOf("Cyllage City")], x: -262, y: 36});
+  data.nodes.push({id: locations[locations.indexOf("Route 10")], x: -286, y: 19});
+  data.nodes.push({id: locations[locations.indexOf("Geosenge Town")], x: -347, y: -5});
+  data.nodes.push({id: locations[locations.indexOf("Route 11")], x: -340, y: -20});
+  data.nodes.push({id: locations[locations.indexOf("Reflection Cave")], x: -322, y: -39});
+  data.nodes.push({id: locations[locations.indexOf("Shalour City")], x: -285, y: -87});
+  data.nodes.push({id: locations[locations.indexOf("Route 12")], x: -212, y: -110});
+  data.nodes.push({id: locations[locations.indexOf("Coumarine City")], x: -124, y: -156});
+  data.nodes.push({id: locations[locations.indexOf("Azure Bay")], x: -165, y: -190});
+  data.nodes.push({id: locations[locations.indexOf("Sea Spirits Den")], x: -201, y: -220});
+  data.nodes.push({id: locations[locations.indexOf("Vaniville Town")], x: 163, y: 197});
+
+  data.edges.push({from: locations[locations.indexOf("Lumiose City")], to: locations[locations.indexOf("Route 4")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Lumiose City")], to: locations[locations.indexOf("Route 5")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Lumiose City")], to: locations[locations.indexOf("Route 13")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Lumiose City")], to: locations[locations.indexOf("Route 14")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Lumiose City")], to: locations[locations.indexOf("Route 16")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 13")], to: locations[locations.indexOf("Coumarine City")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 14")], to: locations[locations.indexOf("Laverre City")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 15")], to: locations[locations.indexOf("Laverre City")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 15")], to: locations[locations.indexOf("Dendemille Town")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 16")], to: locations[locations.indexOf("Dendemille Town")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Dendemille Town")], to: locations[locations.indexOf("Frost Cavern")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Dendemille Town")], to: locations[locations.indexOf("Route 17")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 17")], to: locations[locations.indexOf("Anistar City")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 18")], to: locations[locations.indexOf("Anistar City")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 18")], to: locations[locations.indexOf("Couriway Town")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 18")], to: locations[locations.indexOf("Terminus Cave")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Couriway Town")], to: locations[locations.indexOf("Route 19")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 19")], to: locations[locations.indexOf("Snowbelle City")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 20")], to: locations[locations.indexOf("Snowbelle City")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 21")], to: locations[locations.indexOf("Snowbelle City")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 20")], to: locations[locations.indexOf("Pokemon Village")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 21")], to: locations[locations.indexOf("Victory Road")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Victory Road")], to: locations[locations.indexOf("Pokemon League")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Victory Road")], to: locations[locations.indexOf("Route 22")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 22")], to: locations[locations.indexOf("Santalune City")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Santalune City")], to: locations[locations.indexOf("Route 3")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Santalune City")], to: locations[locations.indexOf("Route 4")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 3")], to: locations[locations.indexOf("Santalune Forest")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Santalune Forest")], to: locations[locations.indexOf("Route 2")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 2")], to: locations[locations.indexOf("Aquacorde Town")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Aquacorde Town")], to: locations[locations.indexOf("Route 1")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 1")], to: locations[locations.indexOf("Vaniville Town")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 5")], to: locations[locations.indexOf("Camphrier Town")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 6")], to: locations[locations.indexOf("Camphrier Town")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 6")], to: locations[locations.indexOf("Parfum Palace")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 7")], to: locations[locations.indexOf("Camphrier Town")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 7")], to: locations[locations.indexOf("Connecting Cave")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Connecting Cave")], to: locations[locations.indexOf("Route 8U")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Connecting Cave")], to: locations[locations.indexOf("Cyllage City")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 8U")], to: locations[locations.indexOf("Ambrette Town")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Ambrette Town")], to: locations[locations.indexOf("Route 9")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 9")], to: locations[locations.indexOf("Glittering Cave")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Ambrette Town")], to: locations[locations.indexOf("Route 8L")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 8L")], to: locations[locations.indexOf("Cyllage City")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Cyllage City")], to: locations[locations.indexOf("Route 10")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 10")], to: locations[locations.indexOf("Geosenge Town")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Geosenge Town")], to: locations[locations.indexOf("Route 11")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 11")], to: locations[locations.indexOf("Reflection Cave")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Reflection Cave")], to: locations[locations.indexOf("Shalour City")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Shalour City")], to: locations[locations.indexOf("Route 12")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Route 12")], to: locations[locations.indexOf("Coumarine City")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Coumarine City")], to: locations[locations.indexOf("Azure Bay")], weight: 1});
+  data.edges.push({from: locations[locations.indexOf("Azure Bay")], to: locations[locations.indexOf("Sea Spirits Den")], weight: 1});
+
+  // any locations that are not in edges remove from data.nodes
+  for (var i = 0; i < data.nodes.length; i++) {
+    var found = false;
+    for (var j = 0; j < data.edges.length; j++) {
+      if (data.nodes[i].id == data.edges[j].from || data.nodes[i].id == data.edges[j].to) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      data.nodes.splice(i, 1);
+      i--;
+    }
+  }
+  // create a chart and set the data
+  console.log(data);
+  var chart = anychart.graph(data);
+  chart.nodes().labels().enabled(true);
+  chart.nodes().labels().fontSize(12);
+  chart.nodes().labels().fontWeight(600);
+  chart.nodes().labels().fontColor("#FFFFFF");
+
+  chart.width('100%');
+  chart.height('100%');
+  chart.layout().type("fixed");
+  chart.background().fill({
+    src: "https://archives.bulbagarden.net/media/upload/8/8a/Kalos_alt.png",
+  });
+  chart.interactivity().zoomOnMouseWheel(false);
+  chart.interactivity().scrollOnMouseWheel(false);
+  chart.interactivity().enabled(false);
+  // set the container id
+  chart.container("map");
+
+  // initiate drawing the chart
+  chart.draw();
+  chart.move(20,-25);
+
+  chart.listen('click', function(e) {
+    var tag = e.domTarget.tag;
+
+    if(tag){
+      console.log(`Clicked ${tag.type} with ID ${tag.id}`);
+      if(tag.type === 'node'){
+        var location = tag.id;
+        var pokemon = [];
+        for (let k in pokemons) {
+          if(location == 'Route 8L' || location == 'Route 8U'){
+            location = 'Route 8';
+          }
+          if (pokemons[k].includes(location)) {
+            pokemon.push(k);
+          }
+        }
+        console.log(pokemon);
+        var location_info = document.getElementsByClassName("location_info")[0];
+        location_info.innerHTML = "";
+        var h1 = document.createElement("h1");
+        h1.innerHTML = location;
+        location_info.appendChild(h1);
+        var h2 = document.createElement("h2");
+        h2.innerHTML = "Pokemon";
+        location_info.appendChild(h2);
+        var ul = document.createElement("ul");
+        for (var i = 0; i < pokemon.length; i++) {
+          var li = document.createElement("li");
+          
+          var a = document.createElement("a");
+          let poke = pokemon[i];
+          poke = poke.replace(/-/g, ' ');
+          poke = poke.split(" ");
+          for (var j = 0; j < poke.length; j++) {
+            poke[j] = poke[j].charAt(0).toUpperCase() + poke[j].slice(1);
+          }
+          poke = poke.join(" ");
+          a.innerHTML = poke;
+          a.href=`{{url_for('pokemon', name='${pokemon[i]}')|unquote}}`;
+          li.appendChild(a);
+          ul.appendChild(li);
+        }
+        location_info.appendChild(ul);
+      }
+    }
+  });
+</script>
+{% endblock %}
