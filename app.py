@@ -198,6 +198,7 @@ def search():
 @app.before_first_request
 def create_tables():
     db.create_all()
+    Region('kalos')
 
 if __name__ == '__main__':
     app.run()
