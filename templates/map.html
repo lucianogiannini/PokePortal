@@ -1,7 +1,7 @@
 {% include 'navbar.html' %} {% block content %}
 
 <style>
-  html{
+  html {
     min-width: 1380px;
   }
   .map {
@@ -11,21 +11,33 @@
     flex-shrink: 0;
     margin-bottom: 50px;
   }
+  .filter_text {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+  }
   .location_info {
     width: 200px;
-    height: 600px;
+    height: 670px;
     margin-right: 5px;
-    margin-left: 60px;
     flex-shrink: 0;
-
+    border: 3px solid rgb(82, 169, 189);
+    background-color: rgb(82, 169, 189);
+    border-radius: 10px;
+    text-align: center;
+  }
+  .location_info ul{
+    text-align: left;
+    font-size: 16px;
   }
   .filter {
     width: 200px;
-    height: 600px;
+    height: 670px;
     margin-left: 5px;
     flex-shrink: 0;
-    border: 3px solid black;
-
+    border: 3px solid rgb(82, 169, 189);
+    background-color: rgb(82, 169, 189);
+    border-radius: 10px;
   }
   .row {
     display: flex;
@@ -36,12 +48,12 @@
     padding-right: 20px;
     background-color: rgb(118, 199, 218);
   }
-  .heroimage{
+  .heroimage {
     width: 60%;
     height: 250px;
     border-radius: 100px;
   }
-  .heroimagecontainer{
+  .heroimagecontainer {
     display: flex;
     justify-content: center;
     background-color: rgb(118, 199, 218);
@@ -50,15 +62,63 @@
   }
 </style>
 <div class="heroimagecontainer">
-  <img class="heroimage" src="{{url_for('static', filename='Image/POKEPORTAL.png')}}"></img>
+  <img
+    class="heroimage"
+    src="{{url_for('static', filename='Image/POKEPORTAL.png')}}"
+  />
 </div>
 <div class="cont">
   <div class="row">
     <div class="location_info">
-      <h3 style="text-align:center">Please select a map location to view available pokemon encounters</h3>
+      <div style="text-align: center; font-size: 16px; font-weight: bold">
+        Please select a map location to view available pokemon encounters
+      </div>
     </div>
     <div class="map" id="map"></div>
-    <div class="filter"></div>
+    <div class="filter">
+      <form action="/map_filter" method="post">
+        <div class="filter_text">
+          Please select a pokemon type to filter on the map:
+        </div>
+        <input type="radio" id="bug" name="type" value="bug" />
+        <label for="bug">Bug</label><br />
+        <input type="radio" id="dark" name="type" value="dark" />
+        <label for="dark">Dark</label><br />
+        <input type="radio" id="dragon" name="type" value="dragon" />
+        <label for="dragon">Dragon</label><br />
+        <input type="radio" id="electric" name="type" value="electric" />
+        <label for="electric">Electric</label><br />
+        <input type="radio" id="fairy" name="type" value="fairy" />
+        <label for="fairy">Fairy</label><br />
+        <input type="radio" id="fighting" name="type" value="fighting" />
+        <label for="fighting">Fighting</label><br />
+        <input type="radio" id="fire" name="type" value="fire" />
+        <label for="fire">Fire</label><br />
+        <input type="radio" id="flying" name="type" value="flying" />
+        <label for="flying">Flying</label><br />
+        <input type="radio" id="ghost" name="type" value="ghost" />
+        <label for="ghost">Ghost</label><br />
+        <input type="radio" id="grass" name="type" value="grass" />
+        <label for="grass">Grass</label><br />
+        <input type="radio" id="ground" name="type" value="ground" />
+        <label for="ground">Ground</label><br />
+        <input type="radio" id="ice" name="type" value="ice" />
+        <label for="ice">Ice</label><br />
+        <input type="radio" id="normal" name="type" value="normal" />
+        <label for="normal">Normal</label><br />
+        <input type="radio" id="poison" name="type" value="poison" />
+        <label for="poison">Poison</label><br />
+        <input type="radio" id="psychic" name="type" value="psychic" />
+        <label for="psychic">Psychic</label><br />
+        <input type="radio" id="rock" name="type" value="rock" />
+        <label for="rock">Rock</label><br />
+        <input type="radio" id="steel" name="type" value="steel" />
+        <label for="steel">Steel</label><br />
+        <input type="radio" id="water" name="type" value="water" />
+        <label for="water">Water</label><br />
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
   </div>
 </div>
 <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-core.min.js"></script>
@@ -263,6 +323,7 @@
         var h1 = document.createElement("h1");
         h1.innerHTML = location;
         location_info.appendChild(h1);
+        if(pokemon.length > 0){
         var h2 = document.createElement("h2");
         h2.innerHTML = "Pokemon";
         location_info.appendChild(h2);
@@ -283,8 +344,18 @@
           ul.appendChild(li);
         }
         location_info.appendChild(ul);
+      } else {
+      var h2 = document.createElement("h2");
+      h2.innerHTML = "No pokemon found in this location";
+      location_info.appendChild(h2);
+      }
       }
     }
   });
+  let type_ = {{type}}
+  if (type_ !== 'None'){
+    let radiobutton = document.getElementById(type_.value);
+    radiobutton.checked = true;
+  }
 </script>
 {% endblock %}

@@ -134,7 +134,18 @@ def map():
   location_names = json.dumps(location_names)
   pokemons = db.session.query(Pokemon).where(Pokemon.encounter_locations != '[]').all()
   pokemon_names = {pokemon.name:ast.literal_eval(pokemon.encounter_locations) for pokemon in pokemons}
-  return render_template('map.html', locations=location_names, pokemons=pokemon_names)
+  return render_template('map.html', locations=location_names, pokemons=pokemon_names, type='None')
+
+@app.route('/map_filter', methods=['POST'])
+def map_filter():
+  check_user()
+  type_ = request.form['type']
+  locations = db.session.query(Location).all()
+  location_names = [location.name for location in locations]
+  location_names = json.dumps(location_names)
+  pokemons = db.session.query(Pokemon).where(Pokemon.encounter_locations != '[]').where(Pokemon.types.contains(type_)).all()
+  pokemon_names = {pokemon.name:ast.literal_eval(pokemon.encounter_locations) for pokemon in pokemons}
+  return render_template('map.html', locations=location_names, pokemons=pokemon_names, type=type_)
 
 @app.route('/configure_region', methods=['GET','POST'])
 def configure_region():
