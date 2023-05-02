@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
 from database import db
 from flask_bootstrap import Bootstrap
-from models.Message import Message
 from models.Pokemon import Pokemon
 from models.Location import Location
 from models.Region import Region
@@ -68,8 +67,7 @@ def check_in_collection(word):
 
 @app.route('/')
 def index():
-    messages = Message.query.all()
-    return render_template('index.html', messages=messages)
+    return redirect(url_for('map'))
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -89,13 +87,6 @@ def login():
         return redirect(url_for('map'))
       else:
         return redirect(url_for('login'))
-@app.route('/submit', methods=['POST'])
-def submit():
-    content = request.form['content']
-    message = Message(content=content)
-    db.session.add(message)
-    db.session.commit()
-    return 'Message added'
 
 @app.route('/add/<pokemon>', methods=['POST'])
 def add(pokemon):
