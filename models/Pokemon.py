@@ -22,22 +22,19 @@ class Pokemon(db.Model):
     def formatEncounterLocations(self):
       res = db.session.query(Location).where(Location.pokemon_encounters.contains(self.name)).all()
       locations = []
-      for loc in res:
-        locations.append(loc.name)
+      [locations.append(loc.name) for loc in res]
       locationsStr = json.dumps(locations)
       return locationsStr
 
     def formatTypes(self, list_):
         types = []
-        for tp in list_:
-            types.append(tp['type']['name'])
+        [types.append(tp['type']['name']) for tp in list_]
         typesStr = json.dumps(types)
         return typesStr
 
     def formatMoves(self, list_):
         moves = []
-        for move in list_:
-            moves.append(move['move']['name'])
+        [moves.append(move['move']['name']) for move in list_]
         movesStr = json.dumps(moves)
         return movesStr
 

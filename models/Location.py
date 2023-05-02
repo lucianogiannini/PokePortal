@@ -21,8 +21,7 @@ class Location(db.Model):
     if res.status_code == 200:
       self.id = data['id']
       areas = data['areas']
-      for area in areas:
-        self.get_pokemon_encounters(area)
+      [self.get_pokemon_encounters(area) for area in areas]
       self.pokemon_encounters = json.dumps(self.pokemon_encounters)
     else:
       return None
@@ -31,8 +30,7 @@ class Location(db.Model):
     res = requests.get(area['url'])
     data = res.json()
     if res.status_code == 200:
-      for encounter in data['pokemon_encounters']:
-        self.pokemon_encounters.append(encounter['pokemon']['name'])
+      [self.pokemon_encounters.append(encounter['pokemon']['name']) for encounter in data['pokemon_encounters']]
     else:
       return None
   

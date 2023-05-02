@@ -23,8 +23,7 @@ class Region():
       return None
     
   def create_locations(self):
-    for location in self.locations:
-      self.create_location(location)
+    [self.create_location(location) for location in self.locations]
   
   def create_location(self,loc):
     name = loc['name']
@@ -32,11 +31,9 @@ class Region():
     Location(name, url)
   
   def create_pokedexes(self):
-    for pokedex in self.pokedexes:
-      self.create_pokedex(pokedex)
+    [self.create_pokedex(pokedex) for pokedex in self.pokedexes]
     
   def create_pokedex(self, pokedex):
     res = requests.get(pokedex['url'])
     data = res.json()
-    for entry in data['pokemon_entries']:
-      Pokemon(entry['entry_number'], entry['pokemon_species']['name'])
+    [Pokemon(entry['entry_number'], entry['pokemon_species']['name']) for entry in data['pokemon_entries']]
