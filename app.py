@@ -20,11 +20,6 @@ db.init_app(app)
 
 user = None
 
-def check_user():
-  global user
-  user = db.session.query(User).first()
-
-
 @app.template_filter('unquote')
 def unquote(url):
     safe = app.jinja_env.filters['safe']
@@ -67,11 +62,13 @@ def check_in_collection(word):
 
 @app.route('/')
 def index():
-    return redirect(url_for('map'))
+    if user is None:
+      return redirect(url_for('login'))
+    else:
+      return redirect(url_for('map'))
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    check_user()
     global user
     if request.method == 'GET':
       return render_template('login.html')
@@ -90,7 +87,6 @@ def login():
 
 @app.route('/add/<pokemon>', methods=['POST'])
 def add(pokemon):
-  check_user()
   global user
   user.addPokemon(pokemon)
   user = db.session.query(User).where(User.username == user.username).first()
@@ -98,38 +94,41 @@ def add(pokemon):
 
 @app.route('/my_collection', methods=['GET'])
 def my_collection():
-  check_user()
-  pokemons = ast.literal_eval(user.pokemon_collection)
-  pokemons = db.session.query(Pokemon).where(Pokemon.name.in_(pokemons)).all()
-  pokemons_split = []
-  temp = []
-  count = 0
-  for pokemon in pokemons:
-    pokemon.sprites = ast.literal_eval(pokemon.sprites)
-    temp.append(pokemon)
-    
-    if count == 4:
+  if user is None:
+    return redirect(url_for('login'))
+  else:
+    pokemons = ast.literal_eval(user.pokemon_collection)
+    pokemons = db.session.query(Pokemon).where(Pokemon.name.in_(pokemons)).all()
+    pokemons_split = []
+    temp = []
+    count = 0
+    for pokemon in pokemons:
+      pokemon.sprites = ast.literal_eval(pokemon.sprites)
+      temp.append(pokemon)
+      
+      if count == 4:
+        pokemons_split.append(temp)
+        temp = []
+        count = 0
+      count += 1
+    if len(temp) != 0:
       pokemons_split.append(temp)
-      temp = []
-      count = 0
-    count += 1
-  if len(temp) != 0:
-    pokemons_split.append(temp)
-  return render_template('my_collection.html', pokemons=pokemons_split)
+    return render_template('my_collection.html', pokemons=pokemons_split)
 
 @app.route('/map')
 def map():
-  check_user()
-  locations = db.session.query(Location).all()
-  location_names = [location.name for location in locations]
-  location_names = json.dumps(location_names)
-  pokemons = db.session.query(Pokemon).where(Pokemon.encounter_locations != '[]').all()
-  pokemon_names = {pokemon.name:ast.literal_eval(pokemon.encounter_locations) for pokemon in pokemons}
-  return render_template('map.html', locations=location_names, pokemons=pokemon_names, type='None')
+  if user is None:
+    return redirect(url_for('login'))
+  else:
+    locations = db.session.query(Location).all()
+    location_names = [location.name for location in locations]
+    location_names = json.dumps(location_names)
+    pokemons = db.session.query(Pokemon).where(Pokemon.encounter_locations != '[]').all()
+    pokemon_names = {pokemon.name:ast.literal_eval(pokemon.encounter_locations) for pokemon in pokemons}
+    return render_template('map.html', locations=location_names, pokemons=pokemon_names, type='None')
 
 @app.route('/map_filter', methods=['POST'])
 def map_filter():
-  check_user()
   type_ = request.form['type']
   locations = db.session.query(Location).all()
   location_names = [location.name for location in locations]
@@ -140,53 +139,61 @@ def map_filter():
 
 @app.route('/configure_region', methods=['GET','POST'])
 def configure_region():
-  check_user()
-  if request.method == 'POST':
-    region = request.form['region']
-    Region(region.lower())
-    return render_template('config_successful.html', region=region.capitalize())
+  if user is None:
+    return redirect(url_for('login'))
   else:
-    return render_template('config.html')
+    if request.method == 'POST':
+      region = request.form['region']
+      Region(region.lower())
+      return render_template('config_successful.html', region=region.capitalize())
+    else:
+      return render_template('config.html')
 
 @app.route('/pokedex', methods=['GET'])
 def pokedex():
-  check_user()
-  pokemons = db.session.query(Pokemon).order_by(Pokemon.id).all()
-  for pokemon in pokemons:
+  if user is None:
+    return redirect(url_for('login'))
+  else:
+    pokemons = db.session.query(Pokemon).order_by(Pokemon.id).all()
+    for pokemon in pokemons:
+      pokemon.encounter_locations = ast.literal_eval(pokemon.encounter_locations)
+      pokemon.moves = ast.literal_eval(pokemon.moves)
+      pokemon.sprites = ast.literal_eval(pokemon.sprites)
+      pokemon.types = ast.literal_eval(pokemon.types)
+    pokemons_split = np.array_split(pokemons, int(len(pokemons)/4))
+    
+    return render_template('pokedex.html', pokemons=pokemons_split, len=int(len(pokemons)/4))
+
+@app.route('/pokemon/<name>', methods=['GET'])
+def pokemon(name):
+  if user is None:
+    return redirect(url_for('login'))
+  else:
+    pokemon = db.session.query(Pokemon).where(Pokemon.name == name).first()
     pokemon.encounter_locations = ast.literal_eval(pokemon.encounter_locations)
     pokemon.moves = ast.literal_eval(pokemon.moves)
     pokemon.sprites = ast.literal_eval(pokemon.sprites)
     pokemon.types = ast.literal_eval(pokemon.types)
-  pokemons_split = np.array_split(pokemons, int(len(pokemons)/4))
-  
-  return render_template('pokedex.html', pokemons=pokemons_split, len=int(len(pokemons)/4))
-
-@app.route('/pokemon/<name>', methods=['GET'])
-def pokemon(name):
-  check_user()
-  pokemon = db.session.query(Pokemon).where(Pokemon.name == name).first()
-  pokemon.encounter_locations = ast.literal_eval(pokemon.encounter_locations)
-  pokemon.moves = ast.literal_eval(pokemon.moves)
-  pokemon.sprites = ast.literal_eval(pokemon.sprites)
-  pokemon.types = ast.literal_eval(pokemon.types)
-  return render_template('pokemon.html', pokemon=pokemon)
+    return render_template('pokemon.html', pokemon=pokemon)
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-  check_user()
-  if request.method == 'POST':
-    query = request.form['search']
-    pokemon = query.lower()
-    pokemons = db.session.query(Pokemon).where(Pokemon.name.contains(pokemon)).limit(20).all()
-    if len(pokemons) == 0:
-      return "No pokemon found"
-    else:
-      names = []
-      for p in pokemons:
-        names.append(p.name)
-      return names
+  if user is None:
+    return redirect(url_for('login'))
   else:
-    return render_template('search.html')
+    if request.method == 'POST':
+      query = request.form['search']
+      pokemon = query.lower()
+      pokemons = db.session.query(Pokemon).where(Pokemon.name.contains(pokemon)).limit(20).all()
+      if len(pokemons) == 0:
+        return "No pokemon found"
+      else:
+        names = []
+        for p in pokemons:
+          names.append(p.name)
+        return names
+    else:
+      return render_template('search.html')
 
 @app.before_first_request
 def create_tables():
